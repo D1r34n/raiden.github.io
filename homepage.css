@@ -238,7 +238,7 @@ body::before {
 
 .submenu-text {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
+  font-weight: 200;
   color: #cfcfcf;
   font-size: clamp(1.2rem, 2.3vw, 1.2rem);
   cursor: pointer;

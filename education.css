@@ -225,7 +225,7 @@ body {
 
 .submenu-text {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
+  font-weight: 200;
   color: #111111;
   font-size: clamp(1.2rem, 2.3vw, 1.2rem);
   cursor: pointer;
@@ -323,7 +323,7 @@ body {
   opacity: 0;
   height: auto;           /* keeps aspect ratio */
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   max-width: 100%;        /* prevent overflow on zoom */
   animation: imageAppearUp 0.5s ease-out forwards 0.5s;
 }
