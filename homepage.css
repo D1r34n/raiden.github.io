@@ -1,0 +1,353 @@
+/* Make the particle container cover the whole screen behind content */
+#particles-js {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* behind all other elements */
+  pointer-events: none; /* so it doesn't block mouse interaction */
+}
+
+/* Body background image only */
+body {
+  margin: 0;
+  height: 100vh;
+  background: url("images/day_bg.jpg") center/cover no-repeat;
+  background-size: cover;
+  transition: background-position 0.1s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gradient overlay as a pseudo-element */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+  pointer-events: none;
+  z-index: -1;  /* above particles but below content */
+}
+
+/* Navbar & hero content */
+.navbar,
+.hero {
+  position: relative;
+  z-index: 2;  /* above gradient & particles */
+  padding: 1rem;
+}
+
+.navbar-brand {
+  font-family: 'MyCustomFont', sans-serif;
+  display: block;
+  text-align: left;
+  margin-left: 0.5rem;
+}
+
+.navbar-brand svg {
+  width: 100%;
+  max-width: clamp(40px, 7vw, 90px);
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Animate SVG handwriting on hover */
+.navbar-brand:hover svg path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s forwards ease-in-out;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.navbar-dark .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'><path stroke='%23e3e3e3' stroke-width='1' d='M4 7h22M4 15h22M4 23h22'/></svg>");
+}
+
+/* Hamburger button customization */
+.navbar-toggler {
+  position: relative;
+  width: 30px;
+  height: 30px;  /* Increase from 24px to 30px for symmetry */
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;  /* Change from space-between to center */
+  align-items: center;  /* Add this */
+  padding: 0;
+  z-index: 2;
+  outline: none;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.navbar-toggler span {
+  display: block;
+  height: 3px;
+  width: 30px;
+  background-color: #e3e3e3;
+  border-radius: 2px;
+  transform-origin: right;
+  position: absolute;
+  right: 0;  /* Add this - aligns to the right */
+  transition: width 0.3s ease, transform 0.3s ease, background-color 0.3s ease, transform-origin 0.3s ease;
+}
+
+/* Position each line when NOT open */
+.navbar-toggler:not(.open) span:nth-child(1) {
+  top: 3px;
+}
+.navbar-toggler:not(.open) span:nth-child(2) {
+  top: 50%;
+  transform: translateY(-50%);
+}
+.navbar-toggler:not(.open) span:nth-child(3) {
+  bottom: 3px;
+}
+
+/* Hover: inverted stairs - only when NOT open */
+.navbar-toggler:not(.open):hover span:nth-child(1) { width: 30px; }
+.navbar-toggler:not(.open):hover span:nth-child(2) { width: 21px; }
+.navbar-toggler:not(.open):hover span:nth-child(3) { width: 12px; }
+
+/* Click: morph into X */
+.navbar-toggler.open span {
+  transform-origin: center;
+  width: 30px;
+  top: 50%;
+  left: 0;  /* Center the X */
+  right: auto;  /* Override the right: 0 */
+}
+
+.navbar-toggler.open span:nth-child(1) {
+  transform: translateY(-50%) rotate(45deg);
+}
+.navbar-toggler.open span:nth-child(2) {
+  opacity: 0;
+}
+.navbar-toggler.open span:nth-child(3) {
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+.navbar-toggler.open:hover{
+  transition:transform 0.3s ease;
+  transform: scale(1.1);
+}
+
+/* Acrylic blur overlay */
+.blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;      /* center menu horizontally */
+  align-items: center;          /* center menu vertically */
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
+}
+
+/* Optional: subtle border shimmer */
+.blur-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+}
+
+/* Show blur when active */
+.blur-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Menu container */
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* top content stays at top, buttons at bottom */
+  align-items: flex-start;        /* default alignment */
+  height: 100%;                   /* full overlay height */
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.menu-top {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 1vw, 1rem);
+  align-items: flex-start;
+  padding-inline-start: clamp(8rem, 20vw, 24rem); /* stronger inward push */
+  margin-top: auto; /* static offset from top */
+  margin-bottom: auto;
+}
+
+/* Menu text styling */
+.menu-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 200;
+  color: #e3e3e3;
+  font-size: clamp(1rem, 2.5vw, 2.5rem); /* responsive scaling */
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease, font-size 0.3s ease;
+  text-decoration: none;
+}
+
+.menu-text:hover {
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.submenu {
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  padding: 1rem;
+  
+}
+
+.submenu-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  color: #cfcfcf;
+  font-size: clamp(1.2rem, 2.3vw, 1.2rem);
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.3s ease;
+  text-decoration: none;
+}
+
+.submenu-text:hover {
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+/* Show submenu on click (or hover if you want) */
+.submenu.active {
+  display: flex;
+}
+
+/* Bottom icon buttons */
+.menu-buttons {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.icon-btn,
+.icon-btn:hover {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.icon-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.icon-btn:hover img {
+  transform: scale(1.1);
+  transition: transform 0.3s ease;
+}
+
+
+/* Hero text */
+.hero {
+  height: calc(100vh - 56px);
+  display: flex;             /* enable flexbox */
+  flex-direction: column;    /* stack devtitle, hero-text, subtitle */
+  align-items: center;       /* horizontal centering */
+  justify-content: center;   /* vertical centering */
+  text-align: center;        /* fallback for inline content */
+  gap: 1rem;                 /* optional spacing between elements */
+  z-index: 0;
+}
+
+
+.hero-text {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  color: #e3e3e3;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  font-size: clamp(2rem, 6vw, 5rem);
+}
+
+/* Typewriter effect */
+.devtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  color: #111111;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  margin-bottom: 2rem;
+  letter-spacing: 2px;
+  background-color: #e3e3e3;
+  padding: 0.2em 0.5em;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.cursor {
+  display: inline-block;
+  font-weight: 400;
+  margin-left: 0.2rem;
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 300;
+  color: #e3e3e3;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  margin-bottom: 5rem;
+  letter-spacing: 2px;
+}
+
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('fonts/beyond-rg.otf') format('opentype');
+}
