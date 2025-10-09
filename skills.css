@@ -1,3 +1,62 @@
+/* LOADING SCREEN */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+#loader-percentage {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 200;
+  color: #e3e3e3;
+  margin-top: 2rem; /* space between SVG and percentage */
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 3.5rem;
+  width: auto; /* allow width to fit content */
+  min-width: 4rem; /* ensures enough space for numbers */
+  text-align: center; /* center the number */
+}
+
+#loader-percentage span {
+  display: inline-block; /* change from block to inline-block */
+  position: relative;     /* relative so it respects the container width */
+  bottom: 0;
+  width: auto;            /* fit content */
+  animation: pushUp 0.3s ease forwards;
+}
+
+.logo-loading {
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center;     /* vertically center */
+  width: 100%;
+}
+
+.logo-loading svg {
+  display: block;    /* removes inline spacing issues */
+  margin: 0 auto;    /* horizontal centering */
+  width: 250px;      /* smaller size */
+  max-width: 80%;
+  height: auto;
+  overflow: visible; /* prevent clipping */
+  
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1s linear infinite;
+}
+
 @keyframes heroSlideUp {
   0% {
     transform: translateY(100%);
@@ -18,6 +77,17 @@
   }
 }
 
+@keyframes slideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 body {
   margin: 0;
   height: 100vh;
@@ -32,10 +102,12 @@ body {
 }
 
 /* Navbar & hero content */
-.navbar{
-  position: relative;
-  z-index: 4;  /* above gradient & particles */
-  padding: 1rem;
+.navbar {
+  position: fixed;   /* keep it fixed on screen */
+  top: 0;            /* stick to top */
+  margin: 0.5rem;
+  width: 100%;       /* full width */
+  z-index: 999;      /* above other content */
 }
 
 .hero {
@@ -48,6 +120,7 @@ body {
   perspective: clamp(800px, 100vw, 1500px);
   transform-style: preserve-3d;
   padding-bottom: 10%;
+  margin-top: 5rem;
 }
 
 .hero-text {
@@ -99,6 +172,8 @@ body {
   transition: filter 0.3s ease, width 0.3s ease, height 0.3s ease, margin 0.3s ease;
   pointer-events: auto;
   animation: imagesSlideUp 1s ease-out forwards 2s;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .orbit-image:hover {
@@ -142,6 +217,10 @@ body {
   height: auto;
   display: block;
   overflow: visible;
+
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s forwards ease-in-out 1s;
 }
 
 /* Animate SVG handwriting on hover */
@@ -171,11 +250,14 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin: 1rem;
   padding: 0;
   z-index: 4;
   outline: none;
   box-shadow: none;
   overflow: visible;
+  opacity: 0;
+  animation: slideLeft 1.5s ease forwards 1s;
 }
 
 .navbar-toggler:focus,
@@ -325,7 +407,7 @@ body {
 
 .submenu-text {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 200;
+  font-weight: 300;
   color: #111111;
   font-size: clamp(1.2rem, 2.3vw, 1.2rem);
   cursor: pointer;

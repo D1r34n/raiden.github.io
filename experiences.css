@@ -1,4 +1,63 @@
-/* Fade-up animation */
+/* LOADING SCREEN */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+#loader-percentage {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 200;
+  color: #e3e3e3;
+  margin-top: 2rem; /* space between SVG and percentage */
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 3.5rem;
+  width: auto; /* allow width to fit content */
+  min-width: 4rem; /* ensures enough space for numbers */
+  text-align: center; /* center the number */
+}
+
+#loader-percentage span {
+  display: inline-block; /* change from block to inline-block */
+  position: relative;     /* relative so it respects the container width */
+  bottom: 0;
+  width: auto;            /* fit content */
+  animation: pushUp 0.3s ease forwards;
+}
+
+.logo-loading {
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center;     /* vertically center */
+  width: 100%;
+}
+
+.logo-loading svg {
+  display: block;    /* removes inline spacing issues */
+  margin: 0 auto;    /* horizontal centering */
+  width: 250px;      /* smaller size */
+  max-width: 80%;
+  height: auto;
+  overflow: visible; /* prevent clipping */
+  
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1s linear infinite;
+}
+
+/* Animations */
 @keyframes fadeUp {
   0% {
     opacity: 0;
@@ -10,14 +69,38 @@
   }
 }
 
-.fade-up {
-  opacity: 0;
-  animation: fadeUp 1.2s ease-out forwards;
+@keyframes fadeIn {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
-/* Delay the subtitle slightly for a nice staggered effect */
-.fade-up.delay {
-  animation-delay: 0.3s;
+@keyframes bounceIcon {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(8px);
+  }
+  60% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Make the particle container cover the whole screen behind content */
@@ -55,8 +138,37 @@ body::before {
   z-index: -1;  /* above particles but below content */
 }
 
+/* HIDE SCROLLBAR */
+/* Hide scrollbar in WebKit (Chrome, Safari, Edge) */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar in Firefox and IE */
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Also apply to html for Edge compatibility */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 /* Navbar & hero content */
-.navbar,
+.navbar {
+  position: fixed;   /* keep it fixed on screen */
+  top: 0;            /* stick to top */
+  margin: 0.5rem;
+  width: 100%;       /* full width */
+  z-index: 999;      /* above other content */
+}
+
 .hero {
   position: relative;
   z-index: 2;  /* above gradient & particles */
@@ -76,6 +188,10 @@ body::before {
   height: auto;
   display: block;
   overflow: visible;
+
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s forwards ease-in-out 1s;
 }
 
 /* Animate SVG handwriting on hover */
@@ -105,11 +221,13 @@ body::before {
   flex-direction: column;
   justify-content: center;  /* Change from space-between to center */
   align-items: center;  /* Add this */
-  padding: 0;
+  margin: 1rem;
   z-index: 2;
   outline: none;
   box-shadow: none;
   overflow: visible;
+  opacity: 0;
+  animation: slideLeft 1.5s ease forwards 1s;
 }
 
 .navbar-toggler:focus,
@@ -191,7 +309,7 @@ body::before {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 1;
+  z-index: 10;
 }
 
 /* Optional: subtle border shimmer */
@@ -260,9 +378,9 @@ body::before {
 
 .submenu-text {
   font-family: 'Montserrat', sans-serif;
-  font-weight: 300;
+  font-weight: 200;
   color: #cfcfcf;
-  font-size: clamp(1.2rem, 2.3vw, 1.2rem);
+  font-size: clamp(0.8rem, 2.3vw, 1.2rem);
   cursor: pointer;
   transition: color 0.3s ease, transform 0.3s ease;
   text-decoration: none;
@@ -278,6 +396,12 @@ body::before {
   cursor: default;        /* removes pointer cursor */
   color: #cfcfcf;            /* optional: keep text color same */
 }
+
+.submenu-text.no-click:hover {
+  color: #cfcfcf;            /* prevent hover color change */
+  transform: none;        /* prevent any hover transform */
+}
+
 
 /* Show submenu on click (or hover if you want) */
 .submenu.active {
@@ -336,6 +460,8 @@ body::before {
   color: #e3e3e3;
   text-transform: uppercase;
   margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards;
   font-size: clamp(2rem, 6vw, 5rem);
 }
 
@@ -372,7 +498,29 @@ body::before {
   color: #e3e3e3;
   font-size: clamp(0.9rem, 2vw, 1.2rem);
   margin-bottom: 5rem;
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards 1.5s;
   letter-spacing: 2px;
+}
+
+.bi-chevron-down {
+  position: absolute;
+  left: 40%;                 /* center horizontally */
+  transform: translateX(-40%);
+  font-size: 2.5rem;
+  color: #e3e3e3;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.4s ease;
+  animation: fadeIn 0.9s ease-out forwards 2s, bounceIcon 1.5s infinite 3s;
+  z-index: 2;
+  margin-top: 10rem;
+}
+
+
+.bi-chevron-down.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 @font-face {

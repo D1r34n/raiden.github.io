@@ -1,35 +1,114 @@
-// ==== Parallax background (unchanged) ====
-let currentX = 50, currentY = 50;
-let targetX = 50, targetY = 50;
-let ticking = false;
 
-document.addEventListener("mousemove", (e) => {
-  targetX = 50 - (e.clientX / window.innerWidth) * 50;
-  targetY = 50 - (e.clientY / window.innerHeight) * 50;
+// Loader JS
+const loader = document.getElementById("loading-screen");
+const percentageEl = document.querySelector("#loader-percentage span");
 
-  if (!ticking) {
-    window.requestAnimationFrame(updateParallax);
-    ticking = true;
+let currentPercent = 0;
+
+// Simulate progress until window.onload
+const simulateProgress = setInterval(() => {
+  // increment slowly to a max of 95%
+  if (currentPercent < 95) {
+    currentPercent += Math.floor(Math.random() * 3) + 1; // 1-3%
+    if (currentPercent > 95) currentPercent = 95;
+    percentageEl.textContent = currentPercent + "%";
   }
+}, 50);
+
+// Once all resources are loaded
+window.addEventListener("load", () => {
+  clearInterval(simulateProgress);
+
+  // Animate the last 100% quickly
+  let finalPercent = 95;
+  const finishInterval = setInterval(() => {
+    finalPercent++;
+    percentageEl.textContent = finalPercent + "%";
+    if (finalPercent >= 100) {
+      clearInterval(finishInterval);
+      // Hide loader
+      loader.style.opacity = "0";
+      loader.style.transform = "translateY(-100%)";
+      setTimeout(() => loader.style.display = "none", 800);
+    }
+  }, 20);
 });
 
-function updateParallax() {
-  currentX += (targetX - currentX) * 0.08;
-  currentY += (targetY - currentY) * 0.08;
-  document.body.style.backgroundPosition = `${currentX}% ${currentY}%`;
+// HOMEPAGE SCRIPTS
 
-  if (Math.abs(targetX - currentX) > 0.1 || Math.abs(targetY - currentY) > 0.1) {
-    window.requestAnimationFrame(updateParallax);
-  } else {
-    ticking = false;
-  }
+// ==== Parallax effect for hero section ====
+const hero = document.querySelector(".hero");
+const layers = {
+  devtitle: document.querySelector(".devtitle"),
+  heroText: document.querySelector(".hero-text"),
+  subtitle: document.querySelector(".subtitle-parallax")
+};
+
+const intensity = { devtitle: 15, heroText: 25, subtitle: 10 };
+let mouseX = 0, mouseY = 0;
+let targetX = 0, targetY = 0;
+
+if (hero) {
+  hero.addEventListener("mousemove", (e) => {
+    const rect = hero.getBoundingClientRect();
+    mouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    mouseY = (e.clientY - rect.top) / rect.height - 0.5;
+  });
 }
+
+function animateParallax() {
+  // gradually interpolate towards mouse position
+  targetX += (mouseX - targetX) * 0.05;
+  targetY += (mouseY - targetY) * 0.05;
+
+  for (const key in layers) {
+    if (layers[key]) { // only if element exists
+      layers[key].style.transform = `translate3d(${targetX * intensity[key]}px, ${targetY * intensity[key]}px, 0)`;
+    }
+  }
+
+  requestAnimationFrame(animateParallax);
+}
+
+animateParallax();
+
+// ==== Binary Effect ====
+function binaryTransition(element, text, interval = 100, duration = 2000) {
+  const chars = "01"; // binary characters
+  let iterations = 0;
+  const maxIterations = duration / interval;
+
+  const originalText = text.split("");
+  const length = originalText.length;
+
+  const intervalId = setInterval(() => {
+    let output = "";
+    for (let i = 0; i < length; i++) {
+      if (i < (iterations / maxIterations) * length) {
+        output += originalText[i]; // reveal actual character
+      } else {
+        output += chars[Math.floor(Math.random() * chars.length)];
+      }
+    }
+    element.textContent = output;
+
+    iterations++;
+    if (iterations > maxIterations) clearInterval(intervalId);
+  }, interval);
+}
+
+// Usage
+const heroTextEl = document.getElementById("homepage-hero-text");
+if (heroTextEl) {
+  binaryTransition(heroTextEl, "Edrian Evangelista");
+}
+
 
 // ==== Typewriter effect ====
 const devTitle = document.getElementById("typewriter");
 const text = "software developer";
 
-if (devTitle){
+if (devTitle) {
   let index = 0, forward = true;
 
   function typeWriter() {
@@ -38,7 +117,7 @@ if (devTitle){
       index++;
       if (index === text.length) {
         forward = false;
-        setTimeout(typeWriter, 3000);
+        setTimeout(typeWriter, 3000); // pause at full text
         return;
       }
     } else {
@@ -46,117 +125,209 @@ if (devTitle){
       index--;
       if (index < 0) {
         forward = true;
-        setTimeout(typeWriter, 500);
+        setTimeout(typeWriter, 500); // pause before retyping
         return;
       }
     }
-    setTimeout(typeWriter, 150);
+    setTimeout(typeWriter, 150); // typing speed
   }
-  typeWriter();
+
+  // Wait until fade-in finishes
+  const devTitleEl = document.querySelector(".devtitle");
+  devTitleEl.addEventListener("animationend", () => {
+    typeWriter(); // start typewriter only after fade-in
+  });
 }
 
 // ==== tsParticles ====
-
-//Dust Background Homepage
+//Enhanced Parallax Dust Particles Homepage
+// ==== tsParticles - Fixed Single Configuration ====
 if (document.getElementById("dustParticlesBackground")) {
   tsParticles.load("dustParticlesBackground", {
     fpsLimit: 60,
     background: { color: "transparent" },
     particles: {
-      number: { value: 80, density: { enable: true, area: 900 } },
+      number: { value: 200, density: { enable: true, area: 2000 } },
       color: { value: "#e3e3e3" },
       shape: { type: "circle" },
-      opacity: { value: 0.4, random: { enable: true, minimumValue: 0.2 } },
-      size: { value: 2, random: { enable: true, minimumValue: 1 } },
+      opacity: { 
+        value: 0.3, 
+        random: { enable: true, minimumValue: 0.8 } 
+      },
+      size: { 
+        value: 1.5, 
+        random: { enable: true, minimumValue: 0.8 } 
+      },
       move: {
         enable: true,
         speed: 0.15,
-        direction: "bottom",
+        direction: "none",
         random: true,
         straight: false,
         outModes: { default: "bounce" },
-        rotate: { value: 20, direction: "clockwise", animation: { enable: true, speed: 3 } }
+        attract: { enable: true, rotateX: 1200, rotateY: 2400 }
+      },
+      zIndex: { 
+        value: { min: 0, max: 100 }, 
+        opacityRate: 0.8, 
+        sizeRate: 1, 
+        velocityRate: 1 
       }
     },
     interactivity: {
-      events: { onHover: { enable: true, mode: "repulse" }, onClick: { enable: false }, resize: true },
-      modes: { repulse: { distance: 120, duration: 0.6, speed: 0.15 } }
+      detectsOn: "window", // Changed from "canvas" to "window" for better detection
+      events: {
+        onHover: { 
+          enable: true, 
+          mode: "repulse", // Repulse mode
+          parallax: { enable: true, force: 60, smooth: 10 }
+        },
+        onClick: { enable: false },
+        resize: true
+      },
+      modes: { 
+        repulse: { 
+          distance: 100, 
+          duration: 1,
+          factor: 100,
+          speed: 1,
+          maxSpeed: 10,
+          easing: "ease-out-quad"
+        }
+      }
     },
-    detectRetina: true
+    detectRetina: true,
+    smooth: true,
+    fullScreen: { enable: false, zIndex: -1 },
+    pauseOnBlur: true,
+    pauseOnOutsideViewport: true
   });
+
+  // Custom parallax container movement
+  const container = document.getElementById("dustParticlesBackground");
+  if (container) {
+    let containerX = 0, containerY = 0;
+    let targetX = 0, targetY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      targetX = (e.clientX - window.innerWidth / 2) * 0.01;
+      targetY = (e.clientY - window.innerHeight / 2) * 0.01;
+    });
+
+    function animateContainer() {
+      containerX += (targetX - containerX) * 0.1;
+      containerY += (targetY - containerY) * 0.1;
+      container.style.transform = `translate(${containerX}px, ${containerY}px)`;
+      requestAnimationFrame(animateContainer);
+    }
+    
+    animateContainer();
+  }
 }
 
-//Parallax Particle Projects
+//Parallax Particle Projects Page
 if (document.getElementById("parallaxLinkBackground")) {
   tsParticles.load("parallaxLinkBackground", {
-      fpsLimit: 60,
-       background: { color: "transparent" },
-      interactivity: {
-        detectsOn: "window",
-        events: {
-          onHover: {
-            enable: true,
-            mode: "parallax",
-            parallax: {
-              enable: true,
-              force: 60,
-              smooth: 10
-            }
-          },
-          resize: true
-        },
-        modes: {
+    fpsLimit: 60,
+    background: { color: "transparent" },
+    interactivity: {
+      detectsOn: "window",
+      events: {
+        onHover: {
+          enable: true,
+          mode: ["grab", "parallax"], // Grab links on hover
           parallax: {
+            enable: true,
             force: 60,
             smooth: 10
           }
+        },
+        onClick: {
+          enable: true,
+          mode: "push"
+        },
+        resize: true
+      },
+      modes: {
+        parallax: {
+          enable: true,
+          force: 60,
+          smooth: 10
+        },
+        grab: {
+          distance: 200,
+          links: {
+            opacity: 0.8,
+            color: "#ffffff"
+          }
+        },
+        push: {
+          quantity: 4
+        }
+      }
+    },
+    particles: {
+      number: {
+        value: 100,
+        density: {
+          enable: true,
+          area: 800
         }
       },
-      particles: {
-        number: {
-          value: 100,
-          density: {
-            enable: true,
-            area: 800
-          }
-        },
-        color: {
-          value: "#e3e3e3"
-        },
-        shape: {
-          type: "circle"
-        },
-        opacity: {
-          value: 0.5,
-          random: {
-            enable: true,
-            minimumValue: 0.1
-          }
-        },
-        size: {
-          value: {
-            min: 1,
-            max: 3
-          }
-        },
-        move: {
+      color: {
+        value: "#e3e3e3"
+      },
+      shape: {
+        type: "circle"
+      },
+      opacity: {
+        value: 0.5,
+        random: {
           enable: true,
-          speed: 1,
-          direction: "none",
-          outModes: {
-            default: "out"
-          }
-        },
-        links: {
-          enable: true,
-          distance: 150,
-          color: "#ffffff",
-          opacity: 0.4,
-          width: 1
+          minimumValue: 0.1
         }
       },
-      detectRetina: true
-    });
+      size: {
+        value: {
+          min: 1,
+          max: 3
+        }
+      },
+      move: {
+        enable: true,
+        speed: 1,
+        direction: "none",
+        random: false,
+        straight: false,
+        outModes: {
+          default: "out"
+        },
+        attract: {
+          enable: false,
+          rotateX: 600,
+          rotateY: 1200
+        }
+      },
+      links: {
+        enable: true,
+        distance: 150,
+        color: "#ffffff",
+        opacity: 0.4,
+        width: 1,
+        triangles: {
+          enable: false
+        }
+      },
+      zIndex: {
+        value: { min: 0, max: 50 },
+        opacityRate: 1,
+        sizeRate: 1,
+        velocityRate: 1
+      }
+    },
+    detectRetina: true,
+    smooth: true
+  });
 }
 
 // ==== Navbar & submenu behavior ====
@@ -399,6 +570,232 @@ orbitImages.forEach(img => {
   img.addEventListener('mouseleave', () => fadeText('SKILLS'));
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const subtitles = document.querySelectorAll('.subtitle');
+  const wrapper = document.querySelector('.preview-wrapper');
+  if (!wrapper) return;
+
+  const previewImage = wrapper.querySelector('.preview-image');
+  let activeSubtitle = null;
+
+  // === 3D Drag Variables ===
+  let isDragging = false;
+  let dragStartX = 0, dragStartY = 0;
+  let dragCurrentX = 0, dragCurrentY = 0;
+
+  // === Hover Tilt Variables ===
+  let isHovering = false;
+  let hoverX = 0, hoverY = 0;
+
+  // === Update Transform Function ===
+  function updateTransform() {
+    const rotateY = dragCurrentX + (isHovering && !isDragging ? hoverX : 0);
+    const rotateX = dragCurrentY + (isHovering && !isDragging ? hoverY : 0);
+    previewImage.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+  }
+
+  // === Subtitle Click Logic ===
+  subtitles.forEach(sub => {
+    sub.addEventListener('click', () => {
+      // Remove "active" from previous subtitle
+      if (activeSubtitle && activeSubtitle !== sub) {
+        activeSubtitle.classList.remove('active');
+      }
+
+      // Toggle the clicked one
+      if (activeSubtitle === sub) {
+        sub.classList.remove('active');
+        activeSubtitle = null;
+        
+        // Fade out and keep hidden
+        wrapper.classList.remove('fade-in');
+        wrapper.classList.add('fade-out');
+        return; // Exit early, don't show image
+      } else {
+        sub.classList.add('active');
+        activeSubtitle = sub;
+      }
+
+      // === Fade transition ===
+      wrapper.classList.remove('fade-in');
+      wrapper.classList.add('fade-out');
+
+      setTimeout(() => {
+        previewImage.src = sub.dataset.img;
+
+        // Reset rotation
+        dragCurrentX = 0;
+        dragCurrentY = 0;
+        updateTransform();
+
+        // Force reflow
+        void wrapper.offsetWidth;
+
+        // Fade in
+        wrapper.classList.remove('fade-out');
+        wrapper.classList.add('fade-in');
+      }, 400); // match fade CSS duration
+    });
+  });
+
+  // === Hover Tilt Effect ===
+  previewImage.addEventListener('mouseenter', () => {
+    isHovering = true;
+  });
+
+  previewImage.addEventListener('mouseleave', () => {
+    isHovering = false;
+    hoverX = 0;
+    hoverY = 0;
+    updateTransform();
+  });
+
+  previewImage.addEventListener('mousemove', (e) => {
+    if (!isHovering || isDragging) return;
+
+    const rect = previewImage.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Calculate tilt based on mouse position relative to center
+    hoverX = ((x - centerX) / centerX) * 30; // Max 30deg tilt (increase for more intensity)
+    hoverY = -((y - centerY) / centerY) * 30; // Max 30deg tilt (increase for more intensity)
+    
+    updateTransform();
+  });
+
+  // === 3D Drag Interaction ===
+  previewImage.style.cursor = 'grab';
+
+  previewImage.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    previewImage.style.cursor = 'grabbing';
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    const rotateY = dragCurrentX + dx / 2;
+    const rotateX = dragCurrentY - dy / 2;
+    previewImage.style.transform = `rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    dragCurrentX += (e.clientX - dragStartX) / 2;
+    dragCurrentY -= (e.clientY - dragStartY) / 2;
+    previewImage.style.cursor = 'grab';
+    updateTransform();
+  });
+
+  // Reset rotation on image click
+  previewImage.addEventListener('click', () => {
+    dragCurrentX = 0;
+    dragCurrentY = 0;
+    hoverX = 0;
+    hoverY = 0;
+    updateTransform();
+  });
+});
+
+const dottedBg = document.querySelector('.dotted-bg');
+
+if (dottedBg) {
+  document.addEventListener('mousemove', (e) => {
+    const offsetX = e.clientX / window.innerWidth * 20;
+    const offsetY = e.clientY / window.innerHeight * 20;
+    dottedBg.style.backgroundPosition = `${offsetX}px ${offsetY}px`;
+  });
+}
+
+// ===== Parallax Mouse Movement with 3D Tilt + Hover Scale =====
+const profileContainerEl = document.querySelector('.profile-container');
+const profilePicEl = document.querySelector('.profile-pic');
+const heroRightEl = document.querySelector('.hero-right');
+const gridFloorEl = document.querySelector('.grid-floor');
+const rotatedHeroTextEl = document.querySelector('.rotated-hero-text');
+
+if (profileContainerEl && profilePicEl && heroRightEl && gridFloorEl && rotatedHeroTextEl) {
+  let mouseTargetX = 0, mouseTargetY = 0;
+let mouseCurrentX = 0, mouseCurrentY = 0;
+const parallaxSmoothing = 0.08; // smaller = smoother
+
+// Track hover states
+let isHoveringProfile = false;
+let isHoveringParagraph = false;
+
+profilePicEl.addEventListener('mouseenter', () => isHoveringProfile = true);
+profilePicEl.addEventListener('mouseleave', () => isHoveringProfile = false);
+
+heroRightEl.addEventListener('mouseenter', () => isHoveringParagraph = true);
+heroRightEl.addEventListener('mouseleave', () => isHoveringParagraph = false);
+
+function animateMouseParallax() {
+  // Smooth parallax movement
+  mouseCurrentX += (mouseTargetX - mouseCurrentX) * parallaxSmoothing;
+  mouseCurrentY += (mouseTargetY - mouseCurrentY) * parallaxSmoothing;
+
+  const x = mouseCurrentX;
+  const y = mouseCurrentY;
+
+  // Profile picture transform + scale
+  const profileRotateTranslate = `rotateY(24deg) rotateX(2deg) translate(${x * -20}px, ${y * -20}px)`;
+  const profileScale = isHoveringProfile ? 1.05 : 1;
+  profilePicEl.style.transform = `${profileRotateTranslate} scale(${profileScale})`;
 
 
+  profilePicEl.style.transition = 'transform 0.3s ease'; // ensures smooth scaling
 
+  if (isHoveringProfile) {
+    profileContainerEl.classList.add('hovered');
+  } else {
+    profileContainerEl.classList.remove('hovered');
+  }
+
+  // Hero paragraph transform + scale
+  const paragraphScale = isHoveringParagraph ? 1.2 : 1;
+  heroRightEl.style.transform = `
+    rotateY(-12deg)
+    rotateX(-2deg)
+    translate(${x * -12}px, ${y * -12}px)
+    scale(${paragraphScale})
+  `;
+
+  // Grid floor tilt + movement
+  gridFloorEl.style.transform = `
+    rotateX(${80 + y * 5}deg)
+    rotateY(${x * 5}deg)
+    translate(${x * 15}px, ${y * 15}px)
+  `;
+
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+
+  if (!isMobile) {
+    // Desktop: apply parallax
+    rotatedHeroTextEl.style.transform = `
+      translateY(-50%) rotate(-90deg)
+      translate(${x * -5}px, ${y * -5}px)
+    `;
+  } else {
+    // Mobile: keep rotation from CSS
+    rotatedHeroTextEl.style.transform = 'translateY(-50%) rotate(0deg) translate(${x * -5}px, ${y * -5}px)';
+  }
+
+
+  requestAnimationFrame(animateMouseParallax);
+}
+
+document.addEventListener('mousemove', (e) => {
+  mouseTargetX = (e.clientX / window.innerWidth - 0.5) * 2;
+  mouseTargetY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+animateMouseParallax();
+}

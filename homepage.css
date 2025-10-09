@@ -1,5 +1,110 @@
+/* LOADING SCREEN */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+#loader-percentage {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 200;
+  color: #e3e3e3;
+  margin-top: 2rem; /* space between SVG and percentage */
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 3.5rem;
+  width: auto; /* allow width to fit content */
+  min-width: 4rem; /* ensures enough space for numbers */
+  text-align: center; /* center the number */
+}
+
+#loader-percentage span {
+  display: inline-block; /* change from block to inline-block */
+  position: relative;     /* relative so it respects the container width */
+  bottom: 0;
+  width: auto;            /* fit content */
+  animation: pushUp 0.3s ease forwards;
+}
+
+.logo-loading {
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center;     /* vertically center */
+  width: 100%;
+}
+
+.logo-loading svg {
+  display: block;    /* removes inline spacing issues */
+  margin: 0 auto;    /* horizontal centering */
+  width: 250px;      /* smaller size */
+  max-width: 80%;
+  height: auto;
+  overflow: visible; /* prevent clipping */
+  
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1s linear infinite;
+}
+
+/* Animations and Fonts*/
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('fonts/beyond-rg.otf') format('opentype');
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Make the particle container cover the whole screen behind content */
-#particles-js {
+#dustParticlesBackground {
   position: fixed;
   top: 0;
   left: 0;
@@ -34,7 +139,14 @@ body::before {
 }
 
 /* Navbar & hero content */
-.navbar,
+.navbar {
+  position: fixed;   /* keep it fixed on screen */
+  top: 0;            /* stick to top */
+  margin: 0.5rem;
+  width: 100%;       /* full width */
+  z-index: 999;      /* above other content */
+}
+
 .hero {
   position: relative;
   z-index: 2;  /* above gradient & particles */
@@ -54,6 +166,10 @@ body::before {
   height: auto;
   display: block;
   overflow: visible;
+  
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s forwards ease-in-out 1s;
 }
 
 /* Animate SVG handwriting on hover */
@@ -61,10 +177,6 @@ body::before {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: draw 3s forwards ease-in-out;
-}
-
-@keyframes draw {
-  to { stroke-dashoffset: 0; }
 }
 
 .navbar-dark .navbar-toggler-icon {
@@ -83,11 +195,13 @@ body::before {
   flex-direction: column;
   justify-content: center;  /* Change from space-between to center */
   align-items: center;  /* Add this */
-  padding: 0;
+  margin: 1rem;
   z-index: 2;
   outline: none;
   box-shadow: none;
   overflow: visible;
+  opacity: 0;
+  animation: slideLeft 1.5s ease forwards 1s;
 }
 
 .navbar-toggler:focus,
@@ -240,7 +354,7 @@ body::before {
   font-family: 'Montserrat', sans-serif;
   font-weight: 200;
   color: #cfcfcf;
-  font-size: clamp(1.2rem, 2.3vw, 1.2rem);
+  font-size: clamp(0.8rem, 2.3vw, 1.2rem);
   cursor: pointer;
   transition: color 0.3s ease, transform 0.3s ease;
   text-decoration: none;
@@ -299,8 +413,13 @@ body::before {
   text-align: center;        /* fallback for inline content */
   gap: 1rem;                 /* optional spacing between elements */
   z-index: 0;
+
+  perspective: 1000px;
 }
 
+.hero .parallax-layer {
+  transition: transform 0.5s ease-out;
+}
 
 .hero-text {
   font-family: 'Montserrat', sans-serif;
@@ -324,6 +443,9 @@ body::before {
   display: inline-block;
   white-space: nowrap;
   overflow: hidden;
+
+  opacity: 0;
+  animation: fadeIn 1.5s ease forwards 3s;
 }
 
 .cursor {
@@ -333,11 +455,6 @@ body::before {
   animation: blink 1s step-start infinite;
 }
 
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
 .subtitle {
   font-family: 'Montserrat', sans-serif;
   font-weight: 300;
@@ -345,9 +462,12 @@ body::before {
   font-size: clamp(0.9rem, 2vw, 1.2rem);
   margin-bottom: 5rem;
   letter-spacing: 2px;
+
+  opacity: 0;
+  animation: fadeInUp 1.5s ease forwards 2s;
 }
 
-@font-face {
-  font-family: 'MyCustomFont';
-  src: url('fonts/beyond-rg.otf') format('opentype');
+.subtitle-parallax {
+  display: inline-block;
+  transition: transform 0.5s ease-out; /* smooth parallax */
 }

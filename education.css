@@ -1,4 +1,124 @@
 
+/* LOADING SCREEN */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #111 0%, #222 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: transform 0.8s ease, opacity 0.8s ease;
+}
+
+#loader-percentage {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 3rem;
+  font-weight: 200;
+  color: #e3e3e3;
+  margin-top: 2rem; /* space between SVG and percentage */
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 3.5rem;
+  width: auto; /* allow width to fit content */
+  min-width: 4rem; /* ensures enough space for numbers */
+  text-align: center; /* center the number */
+}
+
+#loader-percentage span {
+  display: inline-block; /* change from block to inline-block */
+  position: relative;     /* relative so it respects the container width */
+  bottom: 0;
+  width: auto;            /* fit content */
+  animation: pushUp 0.3s ease forwards;
+}
+
+.logo-loading {
+  display: flex;
+  justify-content: center; /* horizontally center */
+  align-items: center;     /* vertically center */
+  width: 100%;
+}
+
+.logo-loading svg {
+  display: block;    /* removes inline spacing issues */
+  margin: 0 auto;    /* horizontal centering */
+  width: 250px;      /* smaller size */
+  max-width: 80%;
+  height: auto;
+  overflow: visible; /* prevent clipping */
+  
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 1s linear infinite;
+}
+
+/* Animations and Fonts*/
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes heroSlideUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes imageAppearUp {
+  0% {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceIcon {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(8px);
+  }
+  60% {
+    transform: translateY(4px);
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 body {
   margin: 0;
   height: 100vh;
@@ -8,23 +128,50 @@ body {
   overflow-x: hidden;
 }
 
+/* HIDE SCROLLBAR */
+/* Hide scrollbar in WebKit (Chrome, Safari, Edge) */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar in Firefox and IE */
+body {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Also apply to html for Edge compatibility */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 /* Navbar & hero content */
-.navbar{
+.navbar {
+  position: fixed;   /* keep it fixed on screen */
+  top: 0;            /* stick to top */
+  margin: 0.5rem;
+  width: 100%;       /* full width */
+  z-index: 999;      /* above other content */
+}
+
+.hero {
   position: relative;
-  z-index: 4;  /* above gradient & particles */
+  z-index: 2;  /* above gradient & particles */
   padding: 1rem;
 }
 
-.hero{
-    z-index: 2;
-}
 .hero-text {
   font-family: 'Montserrat', sans-serif;
   opacity: 0;
   font-weight: 600;
   color: #111111;
   text-transform: uppercase;
-  margin-bottom: 2rem;
+  margin: 5rem 0 2% 0;
   font-size: clamp(2rem, 6vw, 5rem);
   animation: heroSlideUp 1s ease-out forwards 1s;
 }
@@ -42,6 +189,10 @@ body {
   height: auto;
   display: block;
   overflow: visible;
+
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 3s forwards ease-in-out 1s;
 }
 
 /* Animate SVG handwriting on hover */
@@ -49,10 +200,6 @@ body {
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: draw 3s forwards ease-in-out;
-}
-
-@keyframes draw {
-  to { stroke-dashoffset: 0; }
 }
 
 .navbar-dark .navbar-toggler-icon {
@@ -71,11 +218,13 @@ body {
   flex-direction: column;
   justify-content: center;  /* Change from space-between to center */
   align-items: center;  /* Add this */
-  padding: 0;
+  margin: 1rem;
   z-index: 4;
   outline: none;
   box-shadow: none;
   overflow: visible;
+  opacity: 0;
+  animation: slideLeft 1.5s ease forwards 1s;
 }
 
 .navbar-toggler:focus,
@@ -151,8 +300,8 @@ body {
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.15) 0%,
-    rgba(255, 255, 255, 0.05) 100%
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.1) 100%
   );
   opacity: 0;
   pointer-events: none;
@@ -227,7 +376,7 @@ body {
   font-family: 'Montserrat', sans-serif;
   font-weight: 200;
   color: #111111;
-  font-size: clamp(1.2rem, 2.3vw, 1.2rem);
+  font-size: clamp(0.8rem, 2.3vw, 1.2rem);
   cursor: pointer;
   transition: color 0.3s ease, transform 0.3s ease;
   text-decoration: none;
@@ -289,33 +438,9 @@ body {
 .school-wrapper {
   position: relative;
   width: 100%;
-  margin-top: -10rem;
   padding: 0;
   z-index: 2;
   overflow: hidden;       /* prevent horizontal scroll */
-}
-
-
-@keyframes heroSlideUp {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes imageAppearUp {
-  0% {
-    transform: translateY(40%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
 }
 
 .school-image {
@@ -383,28 +508,13 @@ body {
   pointer-events: none;
 }
 
-
-@keyframes bounceIcon {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(8px);
-  }
-  60% {
-    transform: translateY(4px);
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
+.scroll-down {
+  position: absolute;   /* or fixed, depending on your layout */
+  top: 2rem;
+  left: 50%;            /* center horizontally */
+  transform: translateX(-50%); /* adjust for element width */
+  width: 24px;
+  height: 24px;
 }
 
 /* Responsive adjustments */
@@ -413,6 +523,8 @@ body {
     width: 20px;
     height: 20px;
     top: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 
@@ -421,8 +533,11 @@ body {
     width: 18px;
     height: 18px;
     top: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
+
 
 .view-university-btn {
   display: inline-block;

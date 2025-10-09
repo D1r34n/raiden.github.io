@@ -10,14 +10,15 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
+
     <!-- Google Font: Montserrat -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;600;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="education.css">
+    <link rel="stylesheet" href="advocacy.css">
 </head>
 <body>
-    <!-- Loading Screen -->
+  <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="logo-loading">
       <!-- SVG on top -->
@@ -27,7 +28,7 @@
     <!-- Percentage below -->
     <div id="loader-percentage"><span>0%</span></div>
   </div>
-
+  
     <!-- Transparent Navbar -->
   <nav class="navbar navbar-dark bg-transparent">
     <div class="container-fluid">
@@ -52,14 +53,14 @@
     <div class="menu-item-wrapper">
       <h2 id="about-me-btn" class="menu-text">About Me</h2>
       <div id="about-me-submenu" class="submenu">
-        <a class="submenu-text no-click" >Education</a>
+        <a class="submenu-text" href="education.html">Education</a>
         <a class="submenu-text" href="experiences.html">Experience</a>
         <a class="submenu-text" href="skills.html">Skills</a>
         <a class="submenu-text" href="certifications.html">Certification</a>
       </div>
     </div>
 
-    <a class="menu-text" href = "advocacy.html">Advocacy</a>
+    <a class="menu-text no-click">Advocacy</a>
     <a class="menu-text">Portfolio</a>
     <a class="menu-text" href="mailto:edrian.evangelista@gmail.com">Contact</a>
   </div>
@@ -77,25 +78,33 @@
 
 </div>
 
-  <!-- Hero text slightly behind -->
-<div class="hero d-flex flex-column align-items-center justify-content-center text-center">
-    <h1 class="hero-text">EDUCATIONAL BACKGROUND</h1>
+<div class="parallax-container">
+     <div class="grid-floor"></div> <!-- ✅ grid added -->
+    <section class="hero-section">
+    <h1 class="rotated-hero-text">Advocacy</h1>
+
+    <div class="profile-container">
+        <img src="images/profile_pic.png" alt="Profile" class="profile-pic">
+        <div class="profile-name text-align-center">Edrian Evangelista</div>
+    </div>
+
+
+    <div class="hero-right">
+        <p class="subtitle first-line">
+        Technology should be inclusive, sustainable, and impactful
+        </p>
+        <p class="subtitle">
+        I believe that software is more than just code — it’s a tool for change. My advocacy is to build solutions that address real-world challenges: making digital platforms accessible to all, supporting sustainable practices, and encouraging knowledge-sharing within communities. 
+        <br><br> Through my projects and continuous learning, I aim to contribute to technology that uplifts people, creates opportunities, and makes a lasting difference.
+        </p>
+    </div>
+    </section>
 </div>
 
-<i class="bi bi-chevron-down"></i>
 
-<div class="school-wrapper">
-  <img src="images/feu_img.png" alt="School" class="school-image">
-</div>
 
-<div class="school-paragraph">
-    <p class = "lh-lg">
-      Pursued a Bachelor’s degree in Computer Science with Specialization in Software Engineering at FEU Institute of Technology, and graduated year 2026 where I built a strong foundation in software development, algorithms, and data structures.
-    </p>
-    <a href="https://www.feutech.edu.ph/" class="view-university-btn" target="_blank" rel="noopener noreferrer">
-      View University
-    </a>
-</div>
+
+
 
 
 <!-- Scripts -->
